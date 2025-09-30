@@ -28,12 +28,13 @@
   #intro-text {
     font-family: 'Galmuri11'; color: white;
     position: absolute; text-align: center;
-    top: 13%; max-width: 900px;
+    top: 10%; max-width: 900px;
     font-size: 1.2rem; line-height: 1.6;
     opacity: 0; transition: opacity 1.5s ease-in-out;}
 
   #pet-rock {
-    cursor: grab; transition: transform 0.2s ease-out;
+    cursor: grab;
+    transition: transform 0.2s ease-out;
     display: flex; justify-content: center;
     align-items: center; width: 400px; height: 400px;}
 
@@ -53,6 +54,9 @@
     pointer-events: none; animation: float 2s ease-out;}
 
   .wiggle {animation: wiggle 0.5s ease-in-out;}
+  .shiver {animation: shiver 0.4s ease-in-out;}
+  .thinking-tilt {animation: thinking-tilt 1.5s ease-in-out;}
+
 
   @keyframes float {
     from {transform: translateY(0) scale(1); opacity: 1;}
@@ -62,6 +66,18 @@
     0%, 100% { transform: rotate(0deg); }
     25% { transform: rotate(16deg); }
     75% { transform: rotate(-16deg); }} 
+
+  @keyframes shiver {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+  }
+
+  @keyframes thinking-tilt {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(15deg) translateY(-10px); }
+  }
 
   #take-away-btn {
     position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); padding: 15px 30px;
@@ -78,7 +94,8 @@
 <div class="container">
   <p id="intro-text">
     이 녀석은 그냥 돌일 뿐입니다. 하지만 모든 것은 그 사람이 보기 나름이랍니다?<br>
-    마우스 커서로 쓰다듬어주거나, 클릭으로 간지럽히며 애정을 쏟아준다면 분명 좋아할거에요.
+    작은 돌이 움직이며 혼자 노는 것을 지켜보는 걸로도 충분하지만, 마우스 커서로 쓰다듬어주거나<br>
+    클릭으로 간지럽히며 애정을 쏟아준다면 분명 좋아할거에요.
   </p>
 
 <div class="container">
@@ -102,29 +119,35 @@
   
   function petRockEvent() {
     const eventRoll = Math.random();
-    if (rock.matches(':hover') || rock.classList.contains('wiggle')) {
-        setTimeout(petRockEvent, Math.random() * 2500 + 1000); 
+    if (rock.matches(':hover') || rock.classList.contains('wiggle') || rock.classList.contains('shiver') || rock.classList.contains('thinking-tilt')) {
+        setTimeout(petRockEvent, Math.random() * 1000 + 300); 
         return;}
 
     if (eventRoll > 0.7) {
       bubble.textContent = thoughts[Math.floor(Math.random() * thoughts.length)];
       bubble.style.opacity = '1';
-      setTimeout(() => { bubble.style.opacity = '0'; }, 2000);
+      setTimeout(() => { bubble.style.opacity = '0'; }, 1000);
     } else if (eventRoll > 0.4) {
       const moveRoll = Math.random();
-      if (moveRoll > 0.66) {
+      if (moveRoll > 0.8) {
         rock.classList.add('wiggle');
         setTimeout(() => { rock.classList.remove('wiggle'); }, 500);
-      } else if (moveRoll > 0.33) {
+      } else if (moveRoll > 0.6) {
         rock.style.transform = 'translateY(-30px)';
         setTimeout(() => { rock.style.transform = 'none'; }, 500);
+      } else if (moveRoll > 0.4) {
+        rock.classList.add('shiver');
+        setTimeout(() => { rock.classList.remove('shiver'); }, 400);
+      } else if (moveRoll > 0.2) {
+        rock.classList.add('thinking-tilt');
+        setTimeout(() => { rock.classList.remove('thinking-tilt'); }, 1500);
       } else {
         rock.style.transform = 'rotate(40deg)';
         setTimeout(() => { rock.style.transform = 'none'; }, 500);
       }
     }
     
-    const nextEventTime = Math.random() * 2500 + 1000;
+    const nextEventTime = Math.random() * 1000 + 1000;
     setTimeout(petRockEvent, nextEventTime);
   }
 
