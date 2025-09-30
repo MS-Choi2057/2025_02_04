@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>반려 돌 몰고가세요!</title>
+<style>
+
+  @import url('https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css');
+
+  @font-face {
+    font-family: 'Galmuri11';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2506-1@1.0/Galmuri11-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;}
+
+  * {margin: 0; padding: 0; box-sizing: border-box;}
+
+  body {
+    background-image: url(pebbles.jpg);
+    backdrop-filter: brightness(0.6);
+    background-size: auto 150%;
+    overflow: hidden;}
+
+  .container {
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    height: 100vh; padding: 20px; box-sizing: border-box;}
+
+  #intro-text {
+    font-family: 'Galmuri11'; color: white;
+    position: absolute; text-align: center;
+    top: 13%; max-width: 900px;
+    font-size: 1.2rem; line-height: 1.6;
+    opacity: 0; transition: opacity 1.5s ease-in-out;}
+
+  #pet-rock {
+    cursor: grab; transition: transform 0.2s ease-out;
+    display: flex; justify-content: center;
+    align-items: center; width: 400px; height: 400px;}
+
+  #rock-image {
+    max-width: 100%; max-height: 100%;
+    object-fit: contain; display: block;}
+
+  #bubble {
+    font-family: 'Galmuri11';
+    position: absolute; transform: translate(200px, -120px);
+    background: #ffffff; padding: 20px; pointer-events: none;
+    border: black 1px solid; border-radius: 20px 20px 20px 0;
+    font-size: 1.5rem; transition: all 0.5s; z-index: 10;}
+
+  .heart {
+    position: absolute; font-size: 2rem;
+    pointer-events: none; animation: float 2s ease-out;}
+
+  .wiggle {animation: wiggle 0.5s ease-in-out;}
+
+  @keyframes float {
+    from {transform: translateY(0) scale(1); opacity: 1;}
+    to {transform: translateY(-200px) scale(1.5); opacity: 0;}}
+  
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(16deg); }
+    75% { transform: rotate(-16deg); }} 
+
+  #take-away-btn {
+    position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); padding: 15px 30px;
+    font-family: 'Galmuri11', sans-serif; font-size: 1.3rem; background-color: white;
+    color: black; cursor: pointer; opacity: 0; transition: opacity 1.5s ease-in-out;}
+
+  #take-away-btn:hover {
+    background-color: red;
+    color: #fff;}
+
+</style>
+</head>
+<body>
+<div class="container">
+  <p id="intro-text">
+    이 녀석은 그냥 돌일 뿐입니다. 하지만 모든 것은 그 사람이 보기 나름이랍니다?<br>
+    마우스 커서로 쓰다듬어주거나, 클릭으로 간지럽히며 애정을 쏟아준다면 분명 좋아할거에요.
+  </p>
+
+<div class="container">
+  <div id="bubble">...</div>
+  <div id="pet-rock">
+    <img id="rock-image" src="rock1.png" alt="애완돌 얼굴">
+  </div>
+</div>
+
+<button id="take-away-btn">🧳 데려가기</button>
+</body>
+<script>
+  const introText = document.getElementById('intro-text');
+  setTimeout(() => {introText.style.opacity = '1';}, 2000);
+
+  const rock = document.getElementById('pet-rock');
+  const bubble = document.getElementById('bubble');
+
+  const thoughts = ['...', '흠...', 'Zzz...', '배고픈데...', '날 돌로 보지 마.', '나도 감정이 있어.', '친구가 필요해...', ];
+  const petResponses = ['기분 좋다...', '헤헤...', '더 쓰다듬어 줘!', '간질간질해!', '좋아 좋아!', '나랑 놀자!', '고마워!'];
+  
+  function petRockEvent() {
+    const eventRoll = Math.random();
+    if (rock.matches(':hover') || rock.classList.contains('wiggle')) {
+        setTimeout(petRockEvent, Math.random() * 2500 + 1000); 
+        return;}
+
+    if (eventRoll > 0.7) {
+      bubble.textContent = thoughts[Math.floor(Math.random() * thoughts.length)];
+      bubble.style.opacity = '1';
+      setTimeout(() => { bubble.style.opacity = '0'; }, 2000);
+    } else if (eventRoll > 0.4) {
+      const moveRoll = Math.random();
+      if (moveRoll > 0.66) {
+        rock.classList.add('wiggle');
+        setTimeout(() => { rock.classList.remove('wiggle'); }, 500);
+      } else if (moveRoll > 0.33) {
+        rock.style.transform = 'translateY(-30px)';
+        setTimeout(() => { rock.style.transform = 'none'; }, 500);
+      } else {
+        rock.style.transform = 'rotate(40deg)';
+        setTimeout(() => { rock.style.transform = 'none'; }, 500);
+      }
+    }
+    
+    const nextEventTime = Math.random() * 2500 + 1000;
+    setTimeout(petRockEvent, nextEventTime);
+  }
+
+  rock.addEventListener('mouseover', () => {
+    bubble.textContent = petResponses[Math.floor(Math.random() * petResponses.length)];
+    bubble.style.opacity = '1';
+  });
+
+  rock.addEventListener('mousemove', (event) => {
+    const rect = rock.getBoundingClientRect();
+    const rockX = rect.left + rect.width / 2;
+    const distanceX = event.clientX - rockX;
+    const rotation = distanceX / 20;
+
+    if (!rock.matches(':active')) {
+       rock.style.transform = `scale(1.1) rotate(${rotation}deg)`;
+    }
+  });
+
+  rock.addEventListener('mouseout', () => {
+    rock.style.transform = 'none';
+    rock.style.filter = 'none';
+    bubble.style.opacity = '0';
+  });
+
+  rock.addEventListener('mousedown', (event) => {
+    rock.style.transform = 'scale(0.8)';
+    createHeart(event.clientX, event.clientY);
+  });
+
+  rock.addEventListener('mouseup', (event) => {
+    rock.dispatchEvent(new MouseEvent('mousemove', {
+        clientX: event.clientX,
+        clientY: event.clientY
+    }));
+  });
+
+  function createHeart(x, y) {
+    const heart = document.createElement('div');
+    heart.textContent = '💖';
+    heart.classList.add('heart');
+    heart.style.left = (x + (Math.random() * 20 - 10)) + 'px';
+    heart.style.top = (y - 30) + 'px';
+    document.body.appendChild(heart);
+    heart.addEventListener('animationend', () => {
+      heart.remove();
+    });
+  }
+
+  setTimeout(petRockEvent, 2000);
+
+  const takeAwayBtn = document.getElementById('take-away-btn');
+  setTimeout(() => {takeAwayBtn.style.opacity = '1';}, 10000);
+
+  takeAwayBtn.addEventListener('click', () => {
+    const content = "🪨 \n\n" +
+                    " \n\n" +
+                    "[날 품어줘서 고마워! 앞으로도 날 자주 만져줘.] \n\n" +
+                    " \n\n" +
+                    "축하합니다! 당신은 이제 반려 돌의 주인이 되었습니다.\n\n" +
+                    "단순한 돌이지만, 사랑을 받는다면 특별한 존재가 될 수 있습니다.\n\n" +
+                    "돌을 쓰다듬어주고, 간지럽히며, 함께 시간을 보내주세요. \n\n" + 
+                    "돌은 당신의 관심과 사랑을 필요로 한답니다. \n\n" +
+                    "당신과 반려 돌의 행복한 여정을 진심으로 응원합니다!";
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '반려 돌 입양증서.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+</script>
+</html>
